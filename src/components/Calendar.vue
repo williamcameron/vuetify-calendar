@@ -9,7 +9,7 @@
           <v-btn fab text small @click="prev">
             <v-icon small>mdi-chevron-left</v-icon>
           </v-btn>
-          <v-btn fab text small @click="next">
+          <v-btn fab text small @click="next" class="mr-4">
             <v-icon small>mdi-chevron-right</v-icon>
           </v-btn>
           <v-toolbar-title>{{ title }}</v-toolbar-title>
@@ -60,7 +60,6 @@
           v-model="selectedOpen"
           :close-on-content-click="false"
           :activator="selectedElement"
-          full-width
           offset-x
         >
           <v-card
@@ -128,8 +127,43 @@ export default {
     events: [],
     dialog: false,
   }),
-  mounted() {
-    this.getEvents();
+  computed: {
+      title () {
+        const { start, end } = this
+        if (!start || !end) {
+          return ''
+        }
+
+        const startMonth = this.monthFormatter(start)
+        const endMonth = this.monthFormatter(end)
+        const suffixMonth = startMonth === endMonth ? '' : endMonth
+
+        const startYear = start.year
+        const endYear = end.year
+        const suffixYear = startYear === endYear ? '' : endYear
+
+        const startDay = start.day + this.nth(start.day)
+        const endDay = end.day + this.nth(end.day)
+
+        switch (this.type) {
+          case 'month':
+            return `${startMonth} ${startYear}`
+          case 'week':
+          case '4day':
+            return `${startMonth} ${startDay} ${startYear} - ${suffixMonth} ${endDay} ${suffixYear}`
+          case 'day':
+            return `${startMonth} ${startDay} ${startYear}`
+        }
+        return ''
+      },
+      monthFormatter () {
+        return this.$refs.calendar.getFormatter({
+          timeZone: 'UTC', month: 'long',
+        })
+      },
+    },
+    mounted() {
+      this.getEvents();
   },
   methods: {
     async getEvents() {
