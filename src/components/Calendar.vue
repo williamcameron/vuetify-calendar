@@ -3,6 +3,9 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat color="white">
+          <v-btn color="primary" class="mr-4" @click="dialog=true" dark>
+            New Event
+          </v-btn>
           <v-btn outlined class="mr-4" @click="setToday">
             Today
           </v-btn>
